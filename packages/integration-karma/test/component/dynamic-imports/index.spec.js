@@ -1,5 +1,6 @@
 import { createElement } from 'lwc';
 import Container from 'x/dynamic';
+import AttrContainer from 'x/attrs';
 import DynamicCtor from 'x/ctor';
 import AlterCtor from 'x/alter';
 import { registerForLoad, clearRegister } from 'test-utils';
@@ -52,6 +53,40 @@ it('should call the loader', () => {
                     const child = elm.shadowRoot.querySelector('x-ctor');
                     expect(child).toBeNull();
                 });
+            });
+        });
+    });
+});
+
+it('should call the loader with attrs', () => {
+    // note, using `x-` prefix instead of `x/` because these are
+    // handled by `registerForLoad`
+    registerForLoad('x-ctor', DynamicCtor);
+    registerForLoad('x-alter', AlterCtor);
+
+    const elm = createElement('x-dynamic', { is: AttrContainer });
+    document.body.appendChild(elm);
+
+    return Promise.resolve().then(() => {
+        const child = elm.shadowRoot.querySelector('x-ctor');
+        expect(child).toBeNull();
+        // first rendered with ctor set to undefined (nothing)
+        elm.enableCtor();
+        return waitForMacroTask(() => {
+            // second rendered with ctor set to x-ctor
+            const ctorElm = elm.shadowRoot.querySelector('x-ctor');
+            expect(ctorElm).not.toBeNull();
+            const span = ctorElm.shadowRoot.querySelector('span');
+            expect(span).not.toBeNull();
+            expect(span.textContent).toBe('ctor_html');
+            elm.enableAlter();
+            return waitForMacroTask(() => {
+                // third rendered with ctor set to x-alter
+                const alterElm = elm.shadowRoot.querySelector('x-ctor');
+                expect(alterElm).not.toBeNull();
+                const span = alterElm.shadowRoot.querySelector('span');
+                expect(span).not.toBeNull();
+                expect(span.textContent).toBe('alter_html');
             });
         });
     });

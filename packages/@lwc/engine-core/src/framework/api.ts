@@ -681,9 +681,13 @@ let dynamicImportedComponentCounter = 0;
 /**
  * create a dynamic component via `<x-foo lwc:dynamic={Ctor}>`
  */
+type ArgsCtor = { constructor: LightningElementConstructor; attrs: any };
+function isArgsCtor(obj: any): obj is ArgsCtor {
+    return !!obj.attrs;
+}
 export function dc(
     sel: string,
-    Ctor: LightningElementConstructor | null | undefined,
+    Ctor: LightningElementConstructor | ArgsCtor | null | undefined,
     data: CustomElementCompilerData,
     children?: VNodes
 ): VCustomElement | null {
@@ -699,6 +703,11 @@ export function dc(
     if (Ctor == null) {
         return null;
     }
+    let attrs = {};
+    if (isArgsCtor(Ctor)) {
+        attrs = Ctor.attrs;
+        Ctor = Ctor.constructor;
+    }
     if (!isComponentConstructor(Ctor)) {
         throw new Error(`Invalid LWC Constructor ${toString(Ctor)} for custom element <${sel}>.`);
     }
@@ -711,6 +720,7 @@ export function dc(
     // to identify different constructors as vnodes with different keys to avoid reusing the
     // element used for previous constructors.
     data.key = `dc:${idx}:${data.key}`;
+    data.attrs = { ...data.attrs, ...attrs };
     return c(sel, Ctor, data, children);
 }
 
