@@ -82,7 +82,7 @@ export interface VNodeData {
     readonly classMap?: Readonly<Classes>;
     readonly styleDecls?: Readonly<VNodeStyleDecls>;
     readonly context?: Readonly<CustomElementContext>;
-    readonly on?: On;
+    readonly on?: Readonly<On>;
     readonly svg?: boolean;
 }
 
