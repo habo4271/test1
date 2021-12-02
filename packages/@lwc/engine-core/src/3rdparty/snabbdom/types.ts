@@ -75,13 +75,13 @@ export type CustomElementContext = Record<string, Record<string, any>>;
 export interface VNodeData {
     // All props are readonly because VElementData may be shared across VNodes
     // due to hoisting optimizations
-    readonly props?: Props;
-    readonly attrs?: Attrs;
+    readonly props?: Readonly<Props>;
+    readonly attrs?: Readonly<Attrs>;
     readonly className?: any;
     readonly style?: any;
-    readonly classMap?: Classes;
-    readonly styleDecls?: VNodeStyleDecls;
-    readonly context?: CustomElementContext;
+    readonly classMap?: Readonly<Classes>;
+    readonly styleDecls?: Readonly<VNodeStyleDecls>;
+    readonly context?: Readonly<CustomElementContext>;
     readonly on?: On;
     readonly svg?: boolean;
 }
