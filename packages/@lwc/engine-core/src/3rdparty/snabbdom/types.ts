@@ -29,8 +29,8 @@ export type VNodes = Array<VNode | null>;
 
 export interface VNode {
     sel: string | undefined;
-    data: VNodeData;
-    children: VNodes | undefined;
+    data: Readonly<VNodeData>;
+    children: Readonly<VNodes> | undefined;
     elm: Node | undefined;
     parentElm?: Element;
     text: string | undefined;
@@ -41,8 +41,8 @@ export interface VNode {
 
 export interface VElement extends VNode {
     sel: string;
-    data: VElementData;
-    children: VNodes;
+    data: Readonly<VElementData>;
+    children: Readonly<VNodes>;
     elm: Element | undefined;
     text: undefined;
     key: Key;
@@ -52,7 +52,7 @@ export interface VCustomElement extends VElement {
     mode: 'closed' | 'open';
     ctor: any;
     // copy of the last allocated children.
-    aChildren?: VNodes;
+    aChildren?: Readonly<VNodes>;
 }
 
 export interface VText extends VNode {
